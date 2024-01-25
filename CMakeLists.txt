@@ -35,21 +35,17 @@ FetchContent_Declare(
   yaml-cpp
   GIT_REPOSITORY https://github.com/jbeder/yaml-cpp.git
   GIT_TAG        yaml-cpp-0.7.0
-  SOURCE_DIR     ${CMAKE_CURRENT_SOURCE_DIR}/ext/yaml-cpp
 )
 FetchContent_MakeAvailable(yaml-cpp)
-include_directories(${yaml-cpp_SOURCE_DIR}/include)
 message("Done configuring yaml-cpp.")
 
 message("Configuring spdlog...")
 FetchContent_Declare(
   spdlog
   GIT_REPOSITORY https://github.com/gabime/spdlog.git
-  GIT_TAG        v1.11.0
-  SOURCE_DIR     ${CMAKE_CURRENT_SOURCE_DIR}/ext/spdlog
+  GIT_TAG        v1.12.0
 )
 FetchContent_MakeAvailable(spdlog)
-include_directories(${spdlog_SOURCE_DIR}/include)
 message("Done configuring spdlog.")
 
 message("Configuring argparse...")
@@ -57,16 +53,13 @@ FetchContent_Declare(
     argparse
     GIT_REPOSITORY https://github.com/p-ranav/argparse.git
     GIT_TAG        v2.9
-    SOURCE_DIR     ${CMAKE_CURRENT_SOURCE_DIR}/ext/argparse
 )
 FetchContent_MakeAvailable(argparse)
-include_directories(${argparse_SOURCE_DIR}/include)
 message("Done configuring argparse.")
 ##################################
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src)
-
 add_library(ramulator SHARED)
+target_include_directories(ramulator PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)
 set_target_properties(ramulator PROPERTIES
   LIBRARY_OUTPUT_DIRECTORY  ${PROJECT_SOURCE_DIR}
 )
@@ -77,6 +70,7 @@ target_link_libraries(
 )
 
 add_executable(ramulator-exe)
+
 target_link_libraries(
   ramulator-exe
   # PRIVATE -Wl,--whole-archive ramulator -Wl,--no-whole-archive
