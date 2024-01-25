@@ -41,7 +41,7 @@ class LinearMapperBase : public IAddrMapper {
       try {
         m_row_bits_idx = m_dram->m_levels("row");
       } catch (const std::out_of_range& r) {
-        throw std::runtime_error(fmt::format("Organization \"row\" not found in the spec, cannot use linear mapping!"));
+        throw std::runtime_error(std::format("Organization \"row\" not found in the spec, cannot use linear mapping!"));
       }
 
       // Assume column is always the last level
@@ -112,7 +112,7 @@ class MOP4CLXOR final : public LinearMapperBase, public Implementation {
       req.addr_vec[m_col_bits_idx] += slice_lower_bits(addr, m_addr_bits[m_col_bits_idx]-2) << 2;
       req.addr_vec[m_row_bits_idx] = (int) addr;
 
-      int row_xor_index = 0; 
+      int row_xor_index = 0;
       for (int lvl = 0 ; lvl < m_col_bits_idx ; lvl++){
         if (m_addr_bits[lvl] > 0){
           int mask = (req.addr_vec[m_col_bits_idx] >> row_xor_index) & ((1<<m_addr_bits[lvl])-1);

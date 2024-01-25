@@ -21,7 +21,7 @@ Logger_t Logging::get(std::string name) {
     return logger;
   } else {
     throw std::runtime_error(
-      fmt::format(
+      std::format(
         "Logger {} does not exist!",
         name
       )

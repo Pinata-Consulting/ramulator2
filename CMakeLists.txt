@@ -40,6 +40,7 @@ FetchContent_MakeAvailable(yaml-cpp)
 message("Done configuring yaml-cpp.")
 
 message("Configuring spdlog...")
+set(SPDLOG_USE_STD_FORMAT ON)
 FetchContent_Declare(
   spdlog
   GIT_REPOSITORY https://github.com/gabime/spdlog.git

@@ -1,3 +1,5 @@
+#include <numeric>
+#include <ranges>
 #include <vector>
 #include <unordered_map>
 #include <limits>
@@ -18,13 +20,13 @@ class TraceRecorder : public IControllerPlugin, public Implementation {
   private:
     IDRAM* m_dram;
 
-    std::filesystem::path m_trace_path; 
+    std::filesystem::path m_trace_path;
     Logger_t m_tracer;
 
     Clk_t m_clk = 0;
 
   public:
-    void init() override { 
+    void init() override {
       m_trace_path = param<std::string>("path").desc("Path to the trace file").required();
       auto parent_path = m_trace_path.parent_path();
       std::filesystem::create_directories(parent_path);
@@ -37,21 +39,29 @@ class TraceRecorder : public IControllerPlugin, public Implementation {
       m_ctrl = cast_parent<IDRAMController>();
       m_dram = m_ctrl->m_dram;
 
-      auto sink = std::make_shared<spdlog::sinks::basic_file_sink_mt>(fmt::format("{}.ch{}", m_trace_path.string(), m_ctrl->m_channel_id), true);
-      m_tracer = std::make_shared<spdlog::logger>(fmt::format("trace_recorder_ch{}", m_ctrl->m_channel_id), sink);
+      auto sink = std::make_shared<spdlog::sinks::basic_file_sink_mt>(std::format("{}.ch{}", m_trace_path.string(), m_ctrl->m_channel_id), true);
+      m_tracer = std::make_shared<spdlog::logger>(std::format("trace_recorder_ch{}", m_ctrl->m_channel_id), sink);
       m_tracer->set_pattern("%v");
-      m_tracer->set_level(spdlog::level::trace);      
+      m_tracer->set_level(spdlog::level::trace);
     };
 
     void update(bool request_found, ReqBuffer::iterator& req_it) override {
       m_clk++;
 
       if (request_found) {
+
+        std::string joined = std::accumulate(
+        req_it->addr_vec.begin(), req_it->addr_vec.end(),
+        std::string{},
+        [](const std::string& accumulated, int current) {
+            return accumulated.empty() ? std::to_string(current) : accumulated + ", " + std::to_string(current);
+        });
+
         m_tracer->trace(
-          "{}, {}, {}", 
+          "{}, {}, {}",
           m_clk,
           m_dram->m_commands(req_it->command),
-          fmt::join(req_it->addr_vec, ", ")
+          joined
         );
       }
 

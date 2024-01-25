@@ -22,17 +22,17 @@ class GenericDRAMSystem final : public IMemorySystem, public Implementation {
 
 
   public:
-    void init() override { 
+    void init() override {
       // Create device (a top-level node wrapping all channel nodes)
       m_dram = create_child_ifce<IDRAM>();
       m_addr_mapper = create_child_ifce<IAddrMapper>();
 
-      int num_channels = m_dram->get_level_size("channel");   
+      int num_channels = m_dram->get_level_size("channel");
 
       // Create memory controllers
       for (int i = 0; i < num_channels; i++) {
         IDRAMController* controller = create_child_ifce<IDRAMController>();
-        controller->m_impl->set_id(fmt::format("Channel {}", i));
+        controller->m_impl->set_id(std::format("Channel {}", i));
         controller->m_channel_id = i;
         m_controllers.push_back(controller);
       }
@@ -71,7 +71,7 @@ class GenericDRAMSystem final : public IMemorySystem, public Implementation {
 
       return is_success;
     };
-    
+
     void tick() override {
       m_clk++;
       m_dram->tick();
@@ -88,6 +88,6 @@ class GenericDRAMSystem final : public IMemorySystem, public Implementation {
     //   return m_dram->m_requests;
     // };
 };
-  
-}   // namespace 
+
+}   // namespace
 
