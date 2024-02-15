@@ -83,3 +83,11 @@ set_target_properties(
 )
 
 add_subdirectory(src)
+
+install(
+  TARGETS ramulator
+  LIBRARY DESTINATION lib
+  ARCHIVE DESTINATION lib
+  RUNTIME DESTINATION bin
+  INCLUDES DESTINATION include
+)
