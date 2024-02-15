@@ -61,9 +61,6 @@ message("Done configuring argparse.")
 
 add_library(ramulator SHARED)
 target_include_directories(ramulator PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)
-set_target_properties(ramulator PROPERTIES
-  LIBRARY_OUTPUT_DIRECTORY  ${PROJECT_SOURCE_DIR}
-)
 target_link_libraries(
   ramulator
   PUBLIC yaml-cpp
